@@ -1,0 +1,58 @@
+{% load static %}
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title></title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="" />
+    <link rel="stylesheet" href="{% static 'css/table.css' %}" />
+  </head>
+  <body>
+    <!--[if lt IE 7]>
+      <p class="browsehappy">
+        You are using an <strong>outdated</strong> browser. Please
+        <a href="#">upgrade your browser</a> to improve your experience.
+      </p>
+    <![endif]-->
+
+    <h2>Responsive Table</h2>
+    <div class="table-wrapper">
+      <table class="fl-table">
+        <thead>
+          <tr>
+            <th>Tweet</th>
+            <th>Tweet at</th>
+            <th>Sent</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for tweet in allTweets %}
+          
+          <tr>
+            <td>{{tweet.tweet}}</td>
+            <td>{{tweet.tweet_at}}</td>
+            {% if tweet.sent == 1 %}
+            <td>sent</td>
+            {% else %}
+            <td>not sent</td>
+            {% endif %}
+          </tr>
+
+          {% endfor %}
+        </tbody>
+
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <script src="" async defer></script>
+  </body>
+</html>

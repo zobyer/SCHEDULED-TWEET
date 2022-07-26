@@ -1,0 +1,233 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Post Tweet</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--===============================================================================================-->
+    <link
+      rel="icon"
+      type="image/png"
+      href="{% static 'images/icons/favicon.ico' %}"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'vendor/animate/animate.css' %}"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'vendor/css-hamburgers/hamburgers.min.css' %}"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'vendor/select2/select2.min.css' %}"
+    />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
+    <!--===============================================================================================-->
+  </head>
+  <body>
+    <div class="contact1">
+      <div class="container-contact1">
+        <div class="contact1-pic js-tilt" data-tilt>
+          <img src="{% static 'images/img-01.png' %}" alt="IMG" />
+        </div>
+
+        <form
+          class="contact1-form validate-form"
+          id="tweet_from"
+          style="display: none"
+        >
+          {% csrf_token %}
+          <span class="contact1-form-title"> Post Tweet </span>
+
+
+          <div
+            class="wrap-input1 validate-input"
+            data-validate="Message is required"
+          >
+            <textarea
+              class="input1"
+              name="message"
+              placeholder="Message"
+            ></textarea>
+            <span class="shadow-input1"></span>
+          </div>
+
+          <div class="container-contact1-form-btn">
+            <button class="contact1-form-btn">
+              <span>
+                Post
+                <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+              </span>
+            </button>
+          </div>
+        </form>
+
+        <form
+          action="{% url 'postTweet' %}"
+          method="post"
+          class="contact1-form validate-form"
+          id="twitter_otp"
+        >
+          {% csrf_token %}
+          <input
+            class="input1"
+            type="text"
+            name="resource_owner_key"
+            id="resource_owner_key"
+            style="visibility: hidden"
+          />
+
+          <input
+            class="input1"
+            type="text"
+            name="resource_owner_secret"
+            id="resource_owner_secret"
+            style="visibility: hidden"
+          />
+
+
+          <span class="contact1-form-title"> Get in touch </span>
+
+          <div class="wrap-input1" data-validate="OTP is required">
+            <input type="date" id="birthday" name="date">
+            <span class="shadow-input1"></span>
+          </div>
+
+          <div class="wrap-input1" data-validate="OTP is required">
+            <input type="time" id="appt" name="time">
+            <span class="shadow-input1"></span>
+          </div>
+
+          <div
+            class="wrap-input1 validate-input"
+            data-validate="OTP is required"
+          >
+            <input
+              class="input1"
+              type="text"
+              name="otp"
+              placeholder="OTP"
+              required
+            />
+            <span class="shadow-input1"></span>
+          </div>
+
+          <div class="container-contact1-form-btn">
+            <button class="contact1-form-btn">
+              <span>
+                Comfirm
+                <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+              </span>
+            </button>
+          </div>
+
+
+          <textarea
+            class="input1"
+            name="message"
+            placeholder="Message"
+            id="tweet_message"
+            style="visibility: hidden"
+          ></textarea>
+          <span class="shadow-input1"></span>
+        </form>
+      </div>
+    </div>
+
+    <!--===============================================================================================-->
+    <script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
+    <!--===============================================================================================-->
+    <script src="{% static 'vendor/bootstrap/js/popper.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <!--===============================================================================================-->
+    <script src="{% static 'vendor/select2/select2.min.js' %}"></script>
+    <!--===============================================================================================-->
+    <script src="{% static 'vendor/tilt/tilt.jquery.min.js' %}"></script>
+    <script>
+      $(".js-tilt").tilt({
+        scale: 1.1,
+      });
+      $("#tweet_from").css("display", "block");
+      $("#twitter_otp").css("display", "none");
+    </script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"
+    ></script>
+
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "UA-23581568-13");
+    </script>
+
+    <script>
+      /*
+        On submiting the form, send the POST ajax
+        request to server and after successfull submission
+        display the object.
+    */
+      $("#tweet_from").submit(function (e) {
+        // preventing from page reload and default actions
+        e.preventDefault();
+        // serialize the data for sending the form data.
+        var serializedData = $(this).serialize();
+        // make POST ajax call
+        $.ajax({
+          type: "POST",
+          url: "{% url 'gen-url-verifier' %}",
+          data: serializedData,
+          success: function (response) {
+            // on successfull creating object
+            console.log(response);
+            window.open(response["authorization_url"], "_blank");
+            $("#tweet_from").css("display", "none");
+            $("#twitter_otp").css("display", "block");
+            $("#resource_owner_key").val(response["resource_owner_key"]);
+            $("#resource_owner_secret").val(response["resource_owner_secret"]);
+            $("#tweet_message").val(response["tweet_message"]);
+
+            // alert(response["responseJSON"]);
+          },
+          error: function (response) {
+            // alert the error if any error occured
+            console.log(response["responseJSON"]["message"]);
+            alert(response["responseJSON"]["message"]);
+          },
+        });
+      });
+    </script>
+
+    <!--===============================================================================================-->
+    <script src="js/main.js"></script>
+  </body>
+</html>
