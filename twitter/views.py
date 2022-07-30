@@ -1,5 +1,7 @@
 import logging
+from django.contrib import messages
 from django.shortcuts import redirect, render
+from requests import request
 from requests_oauthlib import OAuth1Session
 import os
 import json
@@ -7,6 +9,8 @@ from django.http import JsonResponse, HttpResponse
 from twitter.models import TwitterSchedulerModel
 from datetime import datetime, timedelta
 import arrow
+from django.contrib.auth import authenticate, login as dj_login, logout
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -15,9 +19,19 @@ consumer_secret = "7aEpSVgAMM9uDzFymRZhWWxslewJ2m6btZPBHDtxVZrizaEp7v"
 
 
 def login(request):
-    return render(request, 'login.html')
+    if request.method == 'POST':
+        user = authenticate(username=request.POST["user_name"], password=request.POST["password"])
+        if user is not None:
+            dj_login(request, user)
+            return redirect('/my-tweets')
+        else:
+            messages.info(request, 'invalid credentails')
+            return redirect('/login')
 
+    else:
+        return render(request, 'login.html')
 
+@login_required(login_url='/login', redirect_field_name='')
 def postTweet(request):
     if request.method == 'POST':
         # Get the access token
@@ -44,14 +58,15 @@ def postTweet(request):
           
             newTweet = TwitterSchedulerModel(
                 tweet=request.POST["message"], tweet_at=tweetTime, sent=False, otp=request.POST["otp"],
-                resource_owner_key=access_token, resource_owner_secret=access_token_secret )
+                resource_owner_key=access_token, resource_owner_secret=access_token_secret, user=request.user )
         else:
             sendTweet(access_token,
                       access_token_secret, request.POST["otp"], request.POST["message"])
 
             newTweet = TwitterSchedulerModel(
                 tweet=request.POST["message"], tweet_at=datetime.now(), sent=True, otp=request.POST["otp"],
-                resource_owner_key=request.POST["resource_owner_key"], resource_owner_secret=request.POST["resource_owner_secret"])
+                resource_owner_key=request.POST["resource_owner_key"], 
+                resource_owner_secret=request.POST["resource_owner_secret"], user=request.user)
 
         newTweet.save()
 
@@ -94,13 +109,13 @@ def generateTwitterVerifierUrl(request):
         return JsonResponse(
             {"message": "Request type error"}, status=401)
 
-
+@login_required(login_url='/login', redirect_field_name='')
 def showMyTweets(request):
-    tweets = TwitterSchedulerModel.objects.all()
+    tweets = TwitterSchedulerModel.objects.filter(user=request.user)
     print('tweets ', tweets.values)
     return render(request, 'tweets.html', {'allTweets': tweets})
 
-
+@login_required(login_url='/login', redirect_field_name='')
 def sendTweet(access_token, access_token_secret, otp, message):
     print("token ", access_token, access_token_secret, otp)
     payload = {"text": message}
@@ -138,7 +153,7 @@ def sendScheduledTweets():
     time = datetime.now()
     print("called before", time)
     #TwitterSchedulerModel.objects.filter(id=20).delete()
-
+    #TwitterSchedulerModel.objects.all().delete()
     tweets = TwitterSchedulerModel.objects.filter(
         sent=False, tweet_at__lte=time)
     print("count ", tweets.count())
@@ -157,3 +172,8 @@ def sendScheduledTweets():
 
 def home(request):
     return render(request, 'index.html')
+
+def logout_view(request):
+    logout(request)
+    return redirect('/login')
+
