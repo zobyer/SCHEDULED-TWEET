@@ -29,7 +29,10 @@ def login(request):
             return redirect('/login')
 
     else:
-        return render(request, 'login.html')
+        if request.user.is_authenticated:
+            return redirect('/my-tweets')
+        else:
+            return render(request, 'login.html')
 
 @login_required(login_url='/login', redirect_field_name='')
 def postTweet(request):
