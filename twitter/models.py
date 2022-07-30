@@ -11,4 +11,4 @@ class TwitterSchedulerModel(models.Model):
     otp=models.CharField(max_length=50, default='')
     resource_owner_key=models.CharField(max_length=50,default='')
     resource_owner_secret=models.CharField(max_length=50,default='')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
