@@ -115,7 +115,7 @@ def showMyTweets(request):
     print('tweets ', tweets.values)
     return render(request, 'tweets.html', {'allTweets': tweets})
 
-@login_required(login_url='/login', redirect_field_name='')
+
 def sendTweet(access_token, access_token_secret, otp, message):
     print("token ", access_token, access_token_secret, otp)
     payload = {"text": message}
