@@ -153,7 +153,7 @@ def sendScheduledTweets():
     time = datetime.now()
     print("called before", time)
     #TwitterSchedulerModel.objects.filter(id=20).delete()
-    TwitterSchedulerModel.objects.all().delete()
+    #TwitterSchedulerModel.objects.all().delete()
     tweets = TwitterSchedulerModel.objects.filter(
         sent=False, tweet_at__lte=time)
     print("count ", tweets.count())
