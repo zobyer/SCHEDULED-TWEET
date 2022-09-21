@@ -14,8 +14,8 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
-consumer_key = "WV1V84ExdV6KpkVYJF93ngOBt"
-consumer_secret = "7aEpSVgAMM9uDzFymRZhWWxslewJ2m6btZPBHDtxVZrizaEp7v"
+consumer_key = "PASTE_YOUR_CONSUMER_SECRET_HERE"
+consumer_secret = "PASTE_YOUR_CONSUMER_SECRET_HERE"
 
 
 def login(request):
@@ -38,7 +38,6 @@ def login(request):
 def postTweet(request):
     if request.method == 'POST':
         # Get the access token
-        TwitterSchedulerModel.objects.filter(id=21).delete()
         access_token_url = "https://api.twitter.com/oauth/access_token"
         oauth = OAuth1Session(
             consumer_key,
@@ -161,9 +160,9 @@ def sendScheduledTweets():
         sent=False, tweet_at__lte=time)
     print("count ", tweets.count())
     for tweet in tweets:
-        print("sending tweets", tweet.tweet)
+       
         sendTweet(tweet.resource_owner_key, tweet.resource_owner_secret, tweet.otp, tweet.tweet)
-        print("tweet sent")
+      
         tweet.sent = True
         tweet.save()
 
